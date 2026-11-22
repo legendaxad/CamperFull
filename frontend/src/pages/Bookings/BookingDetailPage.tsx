@@ -24,7 +24,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 import NotFoundPage from '../NotFound/NotFoundPage'
 import { describeError } from '@/services/api/errors'
 import { reviewApi } from '@/services/bookingApi'
-import type { Booking } from '@/types/api'
+import type { Booking, OwnReview } from '@/types/api'
 import { BOOKING_STATUS_LABELS, BOOKING_STATUS_TONES, camperLocation, coverImage } from '@/utils/camper'
 import { cn } from '@/utils/cn'
 import { formatDate, formatDateTime } from '@/utils/format'
@@ -223,6 +223,28 @@ function BookingDetail({ booking }: { booking: Booking }) {
   )
 }
 
+/** The customer's existing review, shown instead of the form (the backend allows one review per booking). */
+function PostedReview({ review }: { review: OwnReview }) {
+  return (
+    <section className="rounded-[20px] bg-white p-6 shadow-card">
+      <h2 className="text-lg font-semibold">Your review</h2>
+      <div className="mt-3 flex gap-1" aria-label={`${review.rating} out of 5 stars`}>
+        {[1, 2, 3, 4, 5].map((value) => (
+          <Star key={value} className={cn('size-6', value <= review.rating ? 'fill-accent text-accent' : 'text-line')} aria-hidden />
+        ))}
+      </div>
+      <p className="mt-3 text-sm whitespace-pre-line">{review.comment}</p>
+      {review.status === 'HIDDEN' && <p className="mt-2 text-xs text-muted">This review is currently hidden by our team.</p>}
+      {review.adminReply && (
+        <div className="mt-4 rounded-xl bg-surface p-4 text-sm">
+          <p className="font-semibold">Reply from FullCamper</p>
+          <p className="mt-1 whitespace-pre-line">{review.adminReply}</p>
+        </div>
+      )}
+    </section>
+  )
+}
+
 /** POST /reviews — only allowed by the backend for COMPLETED bookings, once per booking. */
 function ReviewForm({ booking }: { booking: Booking }) {
   const dispatch = useAppDispatch()
@@ -230,6 +252,20 @@ function ReviewForm({ booking }: { booking: Booking }) {
   const [comment, setComment] = useState('')
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
   const [error, setError] = useState<string | null>(null)
+  // undefined while loading, null when the booking has not been reviewed yet.
+  const [existing, setExisting] = useState<OwnReview | null | undefined>(undefined)
+
+  useEffect(() => {
+    let active = true
+    reviewApi
+      .findForBooking(booking._id)
+      .then((review) => active && setExisting(review))
+      // If the lookup fails the form is still shown; the backend rejects a duplicate review anyway.
+      .catch(() => active && setExisting(null))
+    return () => {
+      active = false
+    }
+  }, [booking._id])
 
   const submit = async () => {
     if (comment.trim().length < 3) {
@@ -251,6 +287,8 @@ function ReviewForm({ booking }: { booking: Booking }) {
   if (status === 'sent') {
     return <p className="rounded-[20px] bg-[#e8f5e9] p-6 text-sm font-medium text-success">Thanks! Your review has been published.</p>
   }
+  if (existing === undefined) return <Skeleton className="h-40 w-full rounded-[20px]" />
+  if (existing) return <PostedReview review={existing} />
   return (
     <section className="rounded-[20px] bg-white p-6 shadow-card">
       <h2 className="text-lg font-semibold">How was your trip?</h2>

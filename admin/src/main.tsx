@@ -9,12 +9,16 @@ import { ToastProvider } from '@/components/ui/Toaster'
 import { ThemeProvider } from '@/features/theme/ThemeProvider'
 import { router } from '@/routes/router'
 import { api } from '@/services/api'
+import { adminApi } from '@/services/endpoints'
 import { setSessionExpiredHandler } from '@/services/httpClient'
 import '@/styles/index.css'
 
 // When the refresh token is rejected, clear cached data and go to the login page once.
 setSessionExpiredHandler(() => {
   if (router.state.location.pathname === '/login') return
+  // Only a session that was loaded can expire. A first visit (no cached profile) is sent to
+  // /login by RequireAuth, without the misleading "Your session expired" notice.
+  if (!adminApi.endpoints.me.select()(store.getState()).data) return
   const next = `${router.state.location.pathname}${router.state.location.search}`
   void router.navigate(`/login?expired=1&next=${encodeURIComponent(next)}`, { replace: true }).then(() => store.dispatch(api.util.resetApiState()))
 })

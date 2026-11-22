@@ -1,4 +1,4 @@
-import type { Booking, BookingQuote, BookingStatus, CheckoutSession, Paginated, Payment, Review } from '@/types/api'
+import type { Booking, BookingQuote, BookingStatus, CheckoutSession, OwnReview, Paginated, Payment, Review } from '@/types/api'
 import { getData, getPaginated, postData, toQueryParams } from './api/apiClient'
 import { ENDPOINTS } from './api/endpoints'
 
@@ -60,5 +60,10 @@ export const paymentApi = {
 export const reviewApi = {
   create(body: { bookingId: string; rating: number; comment: string }): Promise<Review> {
     return postData<Review>(ENDPOINTS.reviews, body)
+  },
+  /** The customer's review for one booking, or null. Reviews are one per booking, so 100 covers any customer. */
+  async findForBooking(bookingId: string): Promise<OwnReview | null> {
+    const { items } = await getPaginated<OwnReview>(ENDPOINTS.myReviews, { params: { limit: 100 } })
+    return items.find((review) => review.booking === bookingId) ?? null
   },
 }

@@ -40,6 +40,17 @@ function HeaderIconLink({ to, label, count, children }: { to: string; label: str
   )
 }
 
+/*
+ * Categories are admin-managed, so only the first ones (by sort order) are shown inline:
+ * one at `lg`, two from `xl`. With exactly three categories the third also fits from 1366px,
+ * because it takes the place of the "More" button. The rest are listed under "More",
+ * which opens the same mega-menu.
+ */
+const INLINE_CLASSES = ['', 'hidden xl:flex', 'hidden min-[1366px]:flex']
+/** For categories[1..]: hidden from "More" at the breakpoint where they are shown inline. */
+const IN_MORE_CLASSES = ['xl:hidden', 'min-[1366px]:hidden']
+const MORE_MENU = '__more__'
+
 /**
  * Global navigation (Figma component "main nav", 90px tall with soft shadow).
  * Desktop: category links with mega-menu dropdowns. Below `lg`: logo, cart and a drawer.
@@ -69,6 +80,12 @@ export function Header() {
   }, [location.pathname, dispatch])
 
   const openMenuCategory = categories.find((c) => c.slug === openCategory)
+  const inlineSlots = categories.length === 3 ? 3 : 2
+  const inlineCategories = categories.slice(0, inlineSlots)
+  const moreCategories = categories.slice(1)
+  const moreActive = moreCategories.some((c) => c.slug === openCategory || location.pathname === ROUTES.category(c.slug))
+  // "More" disappears at the breakpoint where every category fits inline.
+  const moreButtonClass = categories.length > inlineSlots ? '' : (IN_MORE_CLASSES[categories.length - 2] ?? '')
 
   const navLinkClass = (active: boolean) =>
     cn(
@@ -82,19 +99,49 @@ export function Header() {
         <Logo />
 
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
-          {categories.map(({ slug, name }) => (
+          {inlineCategories.map(({ slug, name }, index) => (
             <button
               key={slug}
               type="button"
               aria-expanded={openCategory === slug}
               aria-haspopup="true"
               onClick={() => setOpenCategory((current) => (current === slug ? null : slug))}
-              className={navLinkClass(openCategory === slug || location.pathname === ROUTES.category(slug))}
+              className={cn(navLinkClass(openCategory === slug || location.pathname === ROUTES.category(slug)), INLINE_CLASSES[index])}
             >
               {name}
               <ChevronDown className={cn('size-4 transition', openCategory === slug && 'rotate-180')} aria-hidden />
             </button>
           ))}
+          {moreCategories.length > 0 && (
+            <div className={cn('relative', moreButtonClass)}>
+              <button
+                type="button"
+                aria-expanded={openCategory === MORE_MENU}
+                aria-haspopup="true"
+                onClick={() => setOpenCategory((current) => (current === MORE_MENU ? null : MORE_MENU))}
+                className={navLinkClass(openCategory === MORE_MENU || moreActive)}
+              >
+                More
+                <ChevronDown className={cn('size-4 transition', openCategory === MORE_MENU && 'rotate-180')} aria-hidden />
+              </button>
+              {openCategory === MORE_MENU && (
+                <ul className="absolute top-full left-0 z-10 mt-2 min-w-[220px] rounded-xl bg-white py-2 shadow-nav">
+                  {moreCategories.map(({ slug, name }, index) => (
+                    // Categories that are shown inline at the current breakpoint are hidden here.
+                    <li key={slug} className={index < inlineSlots - 1 ? IN_MORE_CLASSES[index] : undefined}>
+                      <button
+                        type="button"
+                        onClick={() => setOpenCategory(() => slug)}
+                        className="w-full px-4 py-2.5 text-left text-[15px] font-semibold text-ink transition hover:bg-surface hover:text-brand"
+                      >
+                        {name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
           <NavLink to={ROUTES.campingPlaces} className={({ isActive }) => navLinkClass(isActive)}>
             Camping Place
           </NavLink>
@@ -103,7 +150,9 @@ export function Header() {
         <div className="flex items-center gap-1 sm:gap-2">
           <Link
             to={ROUTES.publish}
-            className={cn(buttonClasses({ variant: 'accent', size: 'sm' }), 'mr-1 hidden md:inline-flex')}
+            // `max-md:hidden`, not `hidden md:inline-flex`: cn() does not merge classes, and the base
+            // `inline-flex` from buttonClasses would win over `hidden`, overflowing small screens.
+            className={cn(buttonClasses({ variant: 'accent', size: 'sm' }), 'mr-1 max-md:hidden')}
           >
             <Plus className="size-4" aria-hidden /> List your camper
           </Link>

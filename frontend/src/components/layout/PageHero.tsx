@@ -34,7 +34,8 @@ export function PageHero({ image, title, eyebrow, crumbs, children, size = 'md' 
         {crumbs && (
           <nav aria-label="Breadcrumb" className="mb-2 text-sm font-medium md:text-base">
             {crumbs.map((crumb, i) => (
-              <Fragment key={crumb.label}>
+              // Positional key: labels can repeat (e.g. "Campers / Campers" while a category is loading).
+              <Fragment key={`${i}-${crumb.label}`}>
                 {i > 0 && <span className="mx-1 opacity-80">/</span>}
                 {crumb.to ? (
                   <Link to={crumb.to} className="hover:underline">

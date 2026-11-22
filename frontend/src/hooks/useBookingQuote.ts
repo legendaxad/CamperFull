@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { describeError } from '@/services/api/errors'
+import { describeError, toApiError } from '@/services/api/errors'
 import { bookingApi, type StayRequest } from '@/services/bookingApi'
 import type { BookingQuote } from '@/types/api'
 import { isValidISODate } from '@/utils/dates'
@@ -40,7 +40,8 @@ export function useBookingQuote(request: StayRequest | null): QuoteState {
         .then((quote) => setState({ status: 'succeeded', quote, error: null }))
         .catch((error: unknown) => {
           if (controller.signal.aborted) return
-          setState({ status: 'failed', quote: null, error: describeError(error) })
+          // Coupon rejections carry the specific reason (expired, already used...) as a field error.
+          setState({ status: 'failed', quote: null, error: toApiError(error).fieldMessage('couponCode') ?? describeError(error) })
         })
     }, QUOTE_DEBOUNCE_MS)
     return () => {

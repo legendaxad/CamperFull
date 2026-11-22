@@ -6,3 +6,6 @@ coverage/
 !.env.example
 *.log
 .DS_Store
+
+# Local development database and seed report (never committed)
+.local/

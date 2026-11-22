@@ -249,6 +249,16 @@ export interface Review extends Timestamps {
   adminReply?: string
 }
 
+/** GET /reviews/me — the signed-in customer's own reviews (each linked to the booking it reviews). */
+export interface OwnReview extends Timestamps {
+  _id: ObjectIdString
+  booking: ObjectIdString
+  rating: number
+  comment: string
+  status: 'PUBLISHED' | 'HIDDEN'
+  adminReply?: string
+}
+
 export interface RatingSummary {
   average: number
   count: number

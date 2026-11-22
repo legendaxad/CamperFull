@@ -43,5 +43,6 @@ export const ENDPOINTS = {
     item: (camperId: string) => `/favorites/${camperId}`,
   },
   reviews: '/reviews',
+  myReviews: '/reviews/me',
   inquiries: '/inquiries',
 } as const
