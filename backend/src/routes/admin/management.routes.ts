@@ -27,7 +27,7 @@ import {
 } from "../../validators/catalog.validator";
 import { idParamSchema } from "../../validators/common.validator";
 import { couponCreateSchema, couponListQuerySchema, couponUpdateSchema } from "../../validators/coupon.validator";
-import { dashboardRangeQuerySchema } from "../../validators/dashboard.validator";
+import { activityQuerySchema, dashboardRangeQuerySchema } from "../../validators/dashboard.validator";
 import {
   adminInquiryListQuerySchema,
   adminReviewListQuerySchema,
@@ -46,6 +46,11 @@ dashboardRouter.get("/overview", dashboardController.overview);
 dashboardRouter.get("/revenue", validate({ query: dashboardRangeQuerySchema }), dashboardController.revenue);
 dashboardRouter.get("/bookings", validate({ query: dashboardRangeQuerySchema }), dashboardController.bookings);
 dashboardRouter.get("/top-campers", validate({ query: dashboardRangeQuerySchema }), dashboardController.topCampers);
+dashboardRouter.get("/kpis", validate({ query: dashboardRangeQuerySchema }), dashboardController.kpis);
+dashboardRouter.get("/fleet", validate({ query: dashboardRangeQuerySchema }), dashboardController.fleet);
+dashboardRouter.get("/customers", validate({ query: dashboardRangeQuerySchema }), dashboardController.customers);
+dashboardRouter.get("/payments", validate({ query: dashboardRangeQuerySchema }), dashboardController.payments);
+dashboardRouter.get("/activity", validate({ query: activityQuerySchema }), dashboardController.activity);
 
 export const adminCamperRouter = Router();
 adminCamperRouter.get("/", validate({ query: adminCamperListQuerySchema }), camperController.adminList);

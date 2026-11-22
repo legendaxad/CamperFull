@@ -1,0 +1,1 @@
+{"success":true,"message":"Profile retrieved","data":{"member":{"_id":"6b00560508f1157e252d2fdf","firstName":"Kyle","lastName":"Owner","email":"owner@fullcamper.test","role":"SUPER_ADMIN","status":"ACTIVE","createdAt":"2026-11-20T14:15:33.572Z","updatedAt":"2026-11-20T14:16:53.317Z","lastLoginAt":"2026-11-20T14:16:53.315Z"}}}

@@ -191,6 +191,18 @@ Multer memory storage → Cloudinary. JPEG, PNG, WEBP and AVIF only; 5 MB per fi
 
 All figures are live MongoDB aggregations: net revenue (total and last 30 days), bookings by status, average booking value (confirmed/active/completed), customers (total, new in 30 days), campers by status, open inquiries, recent bookings and customers, upcoming reservations, revenue and booking time series (day/week/month in Korean time, gaps zero-filled), and top campers by booked revenue. `$dateTrunc` requires MongoDB 5.0+.
 
+Range-based analytics (all take `from`/`to` as inclusive Korean calendar days; series also take `interval` = day | week | month | year; ranges are capped at 3,660 days):
+
+| Endpoint | Returns |
+|---|---|
+| `GET /admin/dashboard/kpis` | Period metrics for the range **and** the preceding range of equal length: net revenue, bookings created by status, booked count/value, average booking value, cancellation rate (cancelled after confirmation ÷ ever confirmed; expired unpaid holds and rejections reported separately), new customers, occupancy (booked nights inside the range ÷ non-archived fleet × days). Plus a snapshot of "now": campers by status, total customers, pending bookings, open inquiries, pickups/returns in the next 7 days, overdue pickups/returns |
+| `GET /admin/dashboard/fleet` | Per camper: bookings and booked nights overlapping the range, utilisation, net revenue of its captured payments, whether it is occupied today |
+| `GET /admin/dashboard/customers` | Registrations per period with running total, customers with ≥1 / ≥2 confirmed bookings, returning customers in the range, top customers by net payments |
+| `GET /admin/dashboard/payments` | Payment attempts by status, captured gross/refunded/net (by capture date), refunds issued (by refund date), net by payment method |
+| `GET /admin/dashboard/activity` | Activity feed derived from booking `statusHistory`, payment captures/failures, refunds and customer registrations, with the actor (`page`, `limit`, `type`; newest first; `hasMore`) |
+
+Known approximations: camper status history is not recorded, so occupancy uses today's non-archived fleet (campers created after the range are excluded); refunds in revenue series are attributed to the original capture date.
+
 ## 9. Security summary
 
 Helmet headers · CORS allow-list with credentials · Origin check for CSRF · HTTP-only, SameSite, Secure (prod) cookies · rate limits · bcrypt · hashed refresh and reset tokens · token rotation and reuse detection · immediate revocation · Zod validation of every input (strict bodies reject unknown fields such as `role` or `price`) · regex input escaped (no ReDoS) · 1 MB JSON limit · ownership enforced in queries (other customers' records return 404) · password and token fields hidden from JSON and redacted from logs · production config guards.

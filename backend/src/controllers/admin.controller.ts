@@ -3,7 +3,7 @@ import { getValidated } from "../middleware/validate.middleware";
 import { dashboardService } from "../services/Dashboard.service";
 import { settingsService } from "../services/Settings.service";
 import { sendSuccess } from "../utils/response";
-import { dashboardRangeQuerySchema } from "../validators/dashboard.validator";
+import { activityQuerySchema, dashboardRangeQuerySchema } from "../validators/dashboard.validator";
 import { settingsUpdateSchema } from "../validators/engagement.validator";
 
 export const dashboardController = {
@@ -18,6 +18,21 @@ export const dashboardController = {
   },
   topCampers: async (req: Request, res: Response) => {
     sendSuccess(res, { message: "Top campers retrieved", data: await dashboardService.topCampers(getValidated(req, "query", dashboardRangeQuerySchema)) });
+  },
+  kpis: async (req: Request, res: Response) => {
+    sendSuccess(res, { message: "KPIs retrieved", data: await dashboardService.kpis(getValidated(req, "query", dashboardRangeQuerySchema)) });
+  },
+  fleet: async (req: Request, res: Response) => {
+    sendSuccess(res, { message: "Fleet performance retrieved", data: await dashboardService.fleetPerformance(getValidated(req, "query", dashboardRangeQuerySchema)) });
+  },
+  customers: async (req: Request, res: Response) => {
+    sendSuccess(res, { message: "Customer analytics retrieved", data: await dashboardService.customerAnalytics(getValidated(req, "query", dashboardRangeQuerySchema)) });
+  },
+  payments: async (req: Request, res: Response) => {
+    sendSuccess(res, { message: "Payment summary retrieved", data: await dashboardService.paymentSummary(getValidated(req, "query", dashboardRangeQuerySchema)) });
+  },
+  activity: async (req: Request, res: Response) => {
+    sendSuccess(res, { message: "Activity retrieved", data: await dashboardService.activity(getValidated(req, "query", activityQuerySchema)) });
   },
 };
 

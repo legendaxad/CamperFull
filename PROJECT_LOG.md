@@ -1,5 +1,17 @@
 # FullCamper Project Log
 
+## 2026-11-20 — Admin dashboard (`admin/`)
+
+**Audit:** `admin/` was empty (never committed). Built new on the `frontend/` stack (Vite, React 19, TS strict, Tailwind v4, RTK, axios, react-hook-form + zod), adding RTK Query (caching/dedupe/invalidation), Recharts and Motion.
+
+**Backend (additive, no behaviour change to existing endpoints):** `DashboardService` gained `kpis`, `fleetPerformance`, `customerAnalytics`, `paymentSummary`, `activity`; the series interval gained `year`; ranges capped at 3,660 days. New routes under `/admin/dashboard/*` (see ARCHITECTURE §8). Tests: `tests/analytics.test.ts` (4) — **71/71 backend tests pass**.
+
+**Admin app:** dashboard (8 KPIs with previous-period comparison, revenue/booking charts, status distribution, top campers, recent bookings/customers, alerts, quick actions), analytics, bookings (list/filters/detail/lifecycle actions/refund-on-cancel/notes/calendar), fleet (cards, detail with gallery upload/reorder/delete, performance, 60-day availability, history; create/edit form), customers (list, profile, block), payments (summary, list, detail, refunds), reports with CSV export, notifications, activity log, settings (business rules, profile, password, appearance), admins & roles (super admin). Light/dark/system theme with no flash, persisted. Tests: 31 (utilities + every route rendered against recorded API responses).
+
+**Found:** `backend/.env` has `COOKIE_DOMAIN=false`, which is sent as `Domain=false` so browsers drop the auth cookies (login appears to succeed but every request is 401). Not changed (file holds secrets); set it empty.
+
+**Not implemented (no backend data):** maintenance schedules/logs, an audit log for non-booking admin actions (camper edits, settings, blocks), admin notifications for new registrations, review and inquiry moderation pages (endpoints exist; not in the requested scope).
+
 ## 2026-11-20 — Backend rebuild (`backend/`, branch `feature/backend-typescript`)
 
 ### Phase 1 — Audit and architecture ✅

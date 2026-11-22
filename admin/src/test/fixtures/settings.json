@@ -1,0 +1,1 @@
+{"success":true,"message":"Settings retrieved","data":{"_id":"6b0055fbf605ef40a168964c","key":"business","bookingHoldMinutes":30,"businessName":"FullCamper","createdAt":"2026-11-20T14:15:23.142Z","currency":"KRW","freeCancellationDays":3,"maxAdvanceDays":365,"minLeadDays":1,"pickupTime":"15:00","returnTime":"11:00","updatedAt":"2026-11-20T14:22:52.179Z","weekendNights":[5,6]}}

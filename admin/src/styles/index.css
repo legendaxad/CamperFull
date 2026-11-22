@@ -1,0 +1,261 @@
+@import '@fontsource-variable/inter';
+@import 'tailwindcss';
+
+/*
+ * FullCamper Admin design tokens.
+ *
+ * Every colour is a CSS variable defined once per theme below; Tailwind
+ * utilities (`bg-surface`, `text-fg-2`, `border-line`, ...) resolve to these
+ * variables, so components are written once and switch theme automatically.
+ * The theme is selected by `data-theme` on <html> (set before first paint).
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces: warm white */
+  --c-canvas: #f7f5f0;
+  --c-surface: #ffffff;
+  --c-subtle: #faf8f4;
+  --c-muted: #f1ede5;
+  --c-inset: #ebe6dc;
+  --c-overlay: rgb(20 22 28 / 0.42);
+
+  /* Lines */
+  --c-line: #e9e4da;
+  --c-line-strong: #d9d2c4;
+
+  /* Text */
+  --c-fg: #17191f;
+  --c-fg-2: #4a4f5c;
+  --c-fg-3: #757b88;
+
+  /* Brand: elegant gold. `accent` is for fills, `accent-ink` for text on surfaces. */
+  --c-accent: #c9a24a;
+  --c-accent-hover: #b88f37;
+  --c-accent-ink: #8a6720;
+  --c-accent-soft: #f7efdc;
+  --c-on-accent: #1c1606;
+
+  /* Sidebar */
+  --c-nav: #fbfaf7;
+  --c-nav-fg: #4a4f5c;
+  --c-nav-active: #f3ecdc;
+
+  /* Status */
+  --c-success: #1d7a4a;
+  --c-success-soft: #e5f4eb;
+  --c-warning: #9a5b00;
+  --c-warning-soft: #fdf1dc;
+  --c-danger: #b42318;
+  --c-danger-soft: #fdeceb;
+  --c-info: #2a5fc4;
+  --c-info-soft: #e8effc;
+  --c-neutral-soft: #eeebe5;
+
+  /* Charts (validated with the dataviz palette checker against #ffffff) */
+  --c-chart-1: #b8892c;
+  --c-chart-2: #2a78d6;
+  --c-chart-3: #1baf7a;
+  --c-chart-4: #6250d6;
+  --c-chart-5: #e87ba4;
+  --c-chart-grid: #efebe3;
+  --c-chart-axis: #8b909c;
+
+  --shadow-xs: 0 1px 2px rgb(23 25 31 / 0.05);
+  --shadow-sm: 0 1px 2px rgb(23 25 31 / 0.04), 0 2px 8px -2px rgb(23 25 31 / 0.06);
+  --shadow-md: 0 4px 12px -2px rgb(23 25 31 / 0.08), 0 2px 4px -2px rgb(23 25 31 / 0.04);
+  --shadow-lg: 0 24px 48px -12px rgb(23 25 31 / 0.18), 0 8px 16px -8px rgb(23 25 31 / 0.08);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Surfaces: deep navy-charcoal, never pure black */
+  --c-canvas: #0e1218;
+  --c-surface: #151a22;
+  --c-subtle: #181e27;
+  --c-muted: #1d2430;
+  --c-inset: #242c3a;
+  --c-overlay: rgb(3 6 10 / 0.6);
+
+  --c-line: #232a36;
+  --c-line-strong: #313a4a;
+
+  --c-fg: #eef0f4;
+  --c-fg-2: #b7bdc9;
+  --c-fg-3: #8a92a2;
+
+  --c-accent: #d4ac55;
+  --c-accent-hover: #e0bb68;
+  --c-accent-ink: #e2c07a;
+  --c-accent-soft: rgb(212 172 85 / 0.12);
+  --c-on-accent: #17130a;
+
+  --c-nav: #11161d;
+  --c-nav-fg: #a9b0bd;
+  --c-nav-active: rgb(212 172 85 / 0.1);
+
+  --c-success: #4cc38a;
+  --c-success-soft: rgb(76 195 138 / 0.12);
+  --c-warning: #f0b44c;
+  --c-warning-soft: rgb(240 180 76 / 0.12);
+  --c-danger: #f07167;
+  --c-danger-soft: rgb(240 113 103 / 0.12);
+  --c-info: #6ea1f5;
+  --c-info-soft: rgb(110 161 245 / 0.12);
+  --c-neutral-soft: rgb(183 189 201 / 0.1);
+
+  /* Charts (validated against #151a22) */
+  --c-chart-1: #b88a30;
+  --c-chart-2: #3987e5;
+  --c-chart-3: #199e70;
+  --c-chart-4: #9085e9;
+  --c-chart-5: #d55181;
+  --c-chart-grid: #212834;
+  --c-chart-axis: #7d8596;
+
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 8px -2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 24px 48px -12px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(255 255 255 / 0.04);
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-subtle: var(--c-subtle);
+  --color-muted: var(--c-muted);
+  --color-inset: var(--c-inset);
+  --color-overlay: var(--c-overlay);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-fg: var(--c-fg);
+  --color-fg-2: var(--c-fg-2);
+  --color-fg-3: var(--c-fg-3);
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-on-accent: var(--c-on-accent);
+  --color-nav: var(--c-nav);
+  --color-nav-fg: var(--c-nav-fg);
+  --color-nav-active: var(--c-nav-active);
+  --color-success: var(--c-success);
+  --color-success-soft: var(--c-success-soft);
+  --color-warning: var(--c-warning);
+  --color-warning-soft: var(--c-warning-soft);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-info: var(--c-info);
+  --color-info-soft: var(--c-info-soft);
+  --color-neutral-soft: var(--c-neutral-soft);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --radius-card: 14px;
+  --radius-control: 9px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  body {
+    @apply bg-canvas font-sans text-fg antialiased;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  /* Smooth theme switching: colours only, and only while the class is present. */
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition:
+      background-color 220ms ease,
+      border-color 220ms ease,
+      color 160ms ease,
+      fill 220ms ease,
+      stroke 220ms ease !important;
+  }
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+  }
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--c-accent-soft);
+    color: var(--c-fg);
+  }
+  input[type='date']::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+    cursor: pointer;
+  }
+  [data-theme='dark'] input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-[var(--radius-card)] border border-line bg-surface shadow-xs;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-muted;
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  [data-theme='dark'] .skeleton::after {
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.05), transparent);
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--c-line-strong) transparent;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Recharts: inherit theme colours and keep focus rings off SVG surfaces. */
+.recharts-wrapper .recharts-surface:focus,
+.recharts-wrapper:focus,
+.recharts-sector:focus {
+  outline: none;
+}
